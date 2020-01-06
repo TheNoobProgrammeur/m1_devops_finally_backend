@@ -76,28 +76,6 @@ jobs:
             - v1-dependencies-
 
       - run:
-          name: bd init 
-          command: |
-            . venv/bin/activate
-            flask db init
-
-          environment:
-            CONDUIT_SECRET: 'something-really-secret'
-            FLASK_APP: /home/circleci/repo/autoapp.py
-            FLASK_DEBUG: 1
-
-
-      - run:
-          name: bd migrate 
-          command: |
-            . venv/bin/activate
-            flask db migrate
-
-          environment:
-            CONDUIT_SECRET: 'something-really-secret'
-            FLASK_APP: /home/circleci/repo/autoapp.py
-            FLASK_DEBUG: 1
-      - run:
           name: bd upgrade 
           command: |
             . venv/bin/activate
