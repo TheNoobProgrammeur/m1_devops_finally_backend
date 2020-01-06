@@ -1,120 +1,52 @@
-# Python CircleCI 2.0 configuration file
-#
-# Check https://circleci.com/docs/2.0/language-python/ for more details
-#
-version: 2
-jobs:
-  build:
-    docker:
-      # specify the version you desire here
-      # use `-browsers` prefix for selenium tests, e.g. `3.6.1-browsers`
-      - image: circleci/python:3.6.2-stretch-browsers
-        environment:
-          PIPENV_VENV_IN_PROJECT: true
-
-      # Specify service dependencies here if necessary
-      # CircleCI maintains a library of pre-built images
-      # documented at https://circleci.com/docs/2.0/circleci-images/
-      # - image: circleci/postgres:9.4
-
-    working_directory: ~/repo
-
-    steps:
-      - checkout
-
-      # Download and cache dependencies
-      - restore_cache:
-          keys:
-            - v1-dependencies-{{ checksum "requirements/dev.txt" }}
-            # fallback to using the latest cache if no exact match is found
-
-      - run:
-          name: install dependencies
-          command: |
-            python3 -m venv venv
-            . venv/bin/activate
-            pip install -r requirements/dev.txt --user
-
-          environment:
-            CONDUIT_SECRET: 'something-really-secret'
-            FLASK_APP: /home/circleci/repo/autoapp.py
-            FLASK_DEBUG: 1
-
-      - save_cache:
-          paths:
-            - venv
-          key: v1-dependencies-{{ checksum "requirements/dev.txt" }}
-
-
-
-  test:
-    docker:
-      # specify the version you desire here
-      # use `-browsers` prefix for selenium tests, e.g. `3.6.1-browsers`
-      - image: circleci/python:3.6.2-stretch-browsers
-        environment:
-          PIPENV_VENV_IN_PROJECT: true
-
-      # Specify service dependencies here if necessary
-      # CircleCI maintains a library of pre-built images
-      # documented at https://circleci.com/docs/2.0/circleci-images/
-      - image: postgres:9.6.2-alpine
-        environment:
-          POSTGRES_USER: myUsr  
-          POSTGRES_PASSOWRD: somePwd 
-          POSTGRES_DB: myUsr
-
-    working_directory: ~/repo
-
-    steps:
-      - checkout
-
-      # Download and cache dependencies
-      - restore_cache:
-          keys:
-            - v1-dependencies-{{ checksum "requirements/dev.txt" }}
-            # fallback to using the latest cache if no exact match is found
-    
-      - run:
-          name: bd upgrade 
-          command: |
-            . venv/bin/activate
-            sleep 1
-            flask db upgrade
-          environment:
-            CONDUIT_SECRET: 'something-really-secret'
-            FLASK_APP: /home/circleci/repo/autoapp.py
-            DATABASE_URL: postgresql://myUsr:somePwd@localhost:5432/myUsr
-            FLASK_DEBUG: 1
-
-
-      
-
-      # run tests!
-      # this example uses Django's built-in test-runner
-      # other common Python testing frameworks include pytest and nose
-      # https://pytest.org
-      # https://nose.readthedocs.io
-      - run:
-          name: run tests
-          command: |
-            . venv/bin/activate
-            flask test
-          environment:
-            CONDUIT_SECRET: 'something-really-secret'
-            FLASK_APP: /home/circleci/repo/autoapp.py
-            FLASK_DEBUG: 1
-
-      - save_cache:
-          paths:
-            - venv
-          key: v1-dependencies-{{ checksum "requirements/dev.txt" }}
-
 workflows:
+    version: 2
+    build-deploy:
+      jobs:
+        - build
+
+  
   version: 2
-  build-test-and-deploy:
-    jobs:
-      - build
-      - test:
-          requires:
-            - build
+  jobs:
+    build:
+      docker:
+        - image: circleci/python:3.6.2-stretch-browsers
+          environment:
+            DATABASE_URL: postgresql://myUsr:somePwd@localhost:5432/myUsr
+        - image: circleci/postgres:9.6.5-alpine-ram
+
+      steps:
+        - checkout
+        - restore_cache:
+            key: deps1-{{ .Branch }}-{{ checksum "requirements/dev.txt" }}
+        - run:
+            name: Install Python deps in a venv
+            command: |
+              python3 -m venv venv
+              . venv/bin/activate
+              pip install -r requirements/dev.txt
+        - save_cache:
+            key: deps1-{{ .Branch }}-{{ checksum "requirements/dev.txt" }}
+            paths:
+              - "venv"
+
+        - run;
+            command: |
+              . venv/bin/activate
+              sleep 1
+              flask db upgrade
+        - run:
+            command: |
+              . venv/bin/activate
+              flask test
+        - store_artifacts:
+            path: test-reports/
+            destination: tr1
+        - store_test_results:
+            path: test-reports/
+#    deploy:
+ #     steps:
+  #      - checkout
+   #     - run:
+    #        name: Deploy Master to Heroku
+     #       command: |
+      #        git push https://heroku:$HEROKU_API_KEY@git.heroku.com/$HEROKU_APP_NAME.git master
