@@ -30,8 +30,6 @@ jobs:
       - run:
           name: install dependencies
           command: |
-            python3 -m venv venv
-            . venv/bin/activate
             pip install -r requirements/dev.txt
             
 
@@ -41,8 +39,6 @@ jobs:
             FLASK_DEBUG: 1
 
       - save_cache:
-          paths:
-            - ./venv
           key: v1-dependencies-{{ checksum "requirements.txt" }}
 
 
@@ -77,8 +73,6 @@ jobs:
       - run:
           name: bd upgrade 
           command: |
-            . venv/bin/activate
-            sleep 1
             flask db upgrade
           environment:
             CONDUIT_SECRET: 'something-really-secret'
@@ -97,7 +91,6 @@ jobs:
       - run:
           name: run tests
           command: |
-            . venv/bin/activate
             flask test
           environment:
             CONDUIT_SECRET: 'something-really-secret'
@@ -106,8 +99,6 @@ jobs:
 
 
       - save_cache:
-          paths:
-            - ./venv
           key: v1-dependencies-{{ checksum "requirements.txt" }}
 
 workflows:
