@@ -39,8 +39,6 @@ jobs:
             FLASK_APP: /home/circleci/repo/autoapp.py
             FLASK_DEBUG: 1
 
-      - run: ls -la && pwd
-
       - save_cache:
           paths:
             - ./venv
@@ -88,7 +86,10 @@ jobs:
             FLASK_DEBUG: 1
 
 
-      
+      - save_cache:
+          paths:
+            - ./venv
+          key: v1-dependencies-{{ checksum "requirements/dev.txt" }}
 
       # run tests!
       # this example uses Django's built-in test-runner
@@ -105,10 +106,7 @@ jobs:
             DATABASE_URL: postgresql://myUsr:somePwd@localhost:5432/myUsr
             FLASK_DEBUG: 1
 
-      - save_cache:
-          paths:
-            - ./venv
-          key: v1-dependencies-{{ checksum "requirements/dev.txt" }}
+      
 
 workflows:
   version: 2
