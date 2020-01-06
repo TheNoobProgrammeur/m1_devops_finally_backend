@@ -79,6 +79,7 @@ jobs:
           name: bd upgrade 
           command: |
             . venv/bin/activate
+            sleep 1
             flask db upgrade
           environment:
             CONDUIT_SECRET: 'something-really-secret'
