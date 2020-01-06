@@ -28,10 +28,10 @@ jobs:
 
       - run:
           name: install dependencies
-          command: |
+          command: pip install -r requirements/dev.txt --user
 #            python -m venv venv
- #           . venv/bin/activate
-            pip install -r requirements/dev.txt --user
+#           . venv/bin/activate
+            
 
       - run:
           name: install
