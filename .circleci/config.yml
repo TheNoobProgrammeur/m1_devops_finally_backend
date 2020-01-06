@@ -23,25 +23,28 @@ jobs:
       # Download and cache dependencies
       - restore_cache:
           keys:
-            - v1-dependencies-{{ checksum "requirements.txt" }}
+            - v1-dependencies-{{ checksum "requirements/dev.txt" }}
             # fallback to using the latest cache if no exact match is found
             - v1-dependencies-
 
       - run:
           name: install dependencies
           command: |
+            python3 -m venv venv
+            . venv/bin/activate
             pip install -r requirements/dev.txt --user
-            
 
           environment:
             CONDUIT_SECRET: 'something-really-secret'
             FLASK_APP: /home/circleci/repo/autoapp.py
             FLASK_DEBUG: 1
 
+      - run: ls -la && pwd
+
       - save_cache:
           paths:
             - ./venv
-          key: v1-dependencies-{{ checksum "requirements.txt" }}
+          key: v1-dependencies-{{ checksum "requirements/dev.txt" }}
 
 
 
@@ -68,13 +71,15 @@ jobs:
       # Download and cache dependencies
       - restore_cache:
           keys:
-            - v1-dependencies-{{ checksum "requirements.txt" }}
+            - v1-dependencies-{{ checksum "requirements/dev.txt" }}
             # fallback to using the latest cache if no exact match is found
             - v1-dependencies-
 
       - run:
           name: bd upgrade 
           command: |
+            . venv/bin/activate
+            sleep 1
             flask db upgrade
           environment:
             CONDUIT_SECRET: 'something-really-secret'
@@ -83,7 +88,10 @@ jobs:
             FLASK_DEBUG: 1
 
 
-      
+      - save_cache:
+          paths:
+            - ./venv
+          key: v1-dependencies-{{ checksum "requirements/dev.txt" }}
 
       # run tests!
       # this example uses Django's built-in test-runner
@@ -93,23 +101,18 @@ jobs:
       - run:
           name: run tests
           command: |
+            . venv/bin/activate
             flask test
           environment:
             CONDUIT_SECRET: 'something-really-secret'
             FLASK_APP: /home/circleci/repo/autoapp.py
             FLASK_DEBUG: 1
 
-
-      - save_cache:
-          paths:
-            - ./venv
-          key: v1-dependencies-{{ checksum "requirements.txt" }}
-
 workflows:
   version: 2
   build-test-and-deploy:
     jobs:
       - build
-      - test:
+      - initBD:
           requires:
             - build
