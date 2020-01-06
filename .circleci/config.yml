@@ -39,6 +39,8 @@ jobs:
             FLASK_APP: ~/repo/autoapp.py
             FLASK_DEBUG: 1
 
+      - run: ls -la
+
       - save_cache:
           paths:
             - ./venv
