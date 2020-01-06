@@ -101,7 +101,7 @@ jobs:
           name: run tests
           command: |
             . venv/bin/activate
-            flask tests
+            flask test
           environment:
             CONDUIT_SECRET: 'something-really-secret'
             FLASK_APP: /home/circleci/repo/autoapp.py
