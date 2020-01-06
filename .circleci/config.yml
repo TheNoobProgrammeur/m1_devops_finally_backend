@@ -74,12 +74,7 @@ jobs:
           keys:
             - v1-dependencies-{{ checksum "requirements/dev.txt" }}
             # fallback to using the latest cache if no exact match is found
-      - run:
-          name: bd upgrade 
-          command: |
-            . venv/bin/activate
-            pip install -r requirements/dev.txt --user
-
+    
       - run:
           name: bd upgrade 
           command: |
