@@ -6,10 +6,7 @@ jobs:
         environment:
           DATABASE_URL: postgresql://myUsr:somePwd@localhost:5432/myUsr
       - image: circleci/postgres:9.6.5-alpine-ram
-        environment:
-          POSTGRES_USER: ubuntu
-          POSTGRES_DB: circle_test
-          POSTGRES_PASSWORD: ""
+    working_directory: ~/repo
     steps:
       - checkout
       - restore_cache:
@@ -20,6 +17,11 @@ jobs:
             python3 -m venv venv
             . venv/bin/activate
             pip install -r requirements/dev.txt
+
+          environment:
+            CONDUIT_SECRET: something-really-secret
+            FLASK_APP: /home/circleci/repo/autoapp.py
+            FLASK_DEBUG: 1
       - save_cache:
           key: deps1-{{ .Branch }}-{{ checksum "requirements/dev.txt" }}
           paths:
@@ -29,10 +31,19 @@ jobs:
           command: |
             . venv/bin/activate
             flask db upgrade
+          environment:
+            CONDUIT_SECRET: something-really-secret
+            FLASK_APP: /home/circleci/repo/autoapp.py
+            FLASK_DEBUG: 1
       - run:
           command: |
             . venv/bin/activate
             flask test
+
+          environment:
+            CONDUIT_SECRET: something-really-secret
+            FLASK_APP: /home/circleci/repo/autoapp.py
+            FLASK_DEBUG: 1  
       - store_artifacts:
           path: test-reports/
           destination: tr1
