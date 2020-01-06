@@ -80,11 +80,13 @@ jobs:
           command: |
             . venv/bin/activate
             flask db upgrade
-
           environment:
             CONDUIT_SECRET: 'something-really-secret'
             FLASK_APP: /home/circleci/repo/autoapp.py
+            DATABASE_URL: postgresql://myUsr:somePwd@localhost:5432/myUsr
             FLASK_DEBUG: 1
+
+
       - save_cache:
           paths:
             - ./venv
