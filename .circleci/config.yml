@@ -1,0 +1,84 @@
+# Python CircleCI 2.0 configuration file
+#
+# Check https://circleci.com/docs/2.0/language-python/ for more details
+#
+version: 2
+jobs:
+  build:
+    docker:
+      - image: circleci/python:3.6.1
+
+      - image: circleci/postgres:9.4
+        environment:
+          POSTGRES_USER: myUsr 
+          POSTGRES_PASSOWRD: somePwd 
+          POSTGRES_DB: myUsr
+
+    working_directory: ~/repo
+
+    steps:
+      - checkout
+
+      # Download and cache dependencies
+      - restore_cache:
+          keys:
+            - v1-dependencies-{{ checksum "requirements.txt" }}-{{ .Environment.CACHE_VERSION }}
+            # fallback to using the latest cache if no exact match is found
+            - v1-dependencies-
+
+      - run:
+          name: install dependencies
+          command: |
+            python3 -m venv venv
+            . venv/bin/activate
+            pip install -r requirements.txt/dev.txt --user
+
+      - run:
+          name: install
+          command: |
+            flask db init
+            flask db migrate
+            flask db upgrade
+
+          environment:
+            CONDUIT_SECRET: 'something-really-secret'
+            FLASK_APP: /path/to/autoapp.py
+            FLASK_DEBUG: 1
+
+      - save_cache:
+          paths:
+            - ./venv
+          key: v1-dependencies-{{ checksum "requirements.txt" }}-{{ .Environment.CACHE_VERSION }}
+
+  tests:
+    docker:
+      - image: circleci/python:3.6.1
+        
+      - image: circleci/postgres:9.4
+        environment:
+          POSTGRES_USER: myUsr 
+          POSTGRES_PASSOWRD: somePwd 
+          POSTGRES_DB: myUsr
+        
+    working_directory: ~/repo
+        
+    steps:
+      - checkout
+        
+          # Download and cache dependencies
+      - restore_cache:
+        keys:
+          - v1-dependencies-{{ checksum "requirements.txt" }}-{{ .Environment.CACHE_VERSION }}
+                    # fallback to using the latest cache if no exact match is found
+          - v1-dependencies-          
+      - run:
+          name: run tests
+          command: |
+            . venv/bin/activate
+            flask db upgrade
+            flask test
+
+      - save_cache:
+          paths:
+            - ./venv
+          key: v1-dependencies-{{ checksum "requirements.txt" }}-{{ .Environment.CACHE_VERSION }}
