@@ -95,15 +95,16 @@ jobs:
       # other common Python testing frameworks include pytest and nose
       # https://pytest.org
       # https://nose.readthedocs.io
+
+      - run: pip install -r requirements/dev.txt --user
+
       - run:
           name: run tests
-          command: |
-            . venv/bin/activate
-            pip install -r requirements/dev.txt --user
-            flask test
+          command: flask test
           environment:
             CONDUIT_SECRET: 'something-really-secret'
             FLASK_APP: /home/circleci/repo/autoapp.py
+            DATABASE_URL: postgresql://myUsr:somePwd@localhost:5432/myUsr
             FLASK_DEBUG: 1
 
       - save_cache:
