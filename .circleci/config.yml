@@ -34,6 +34,11 @@ jobs:
             . venv/bin/activate
             pip install -r requirements/dev.txt --user
 
+          environment:
+            CONDUIT_SECRET: 'something-really-secret'
+            FLASK_APP: /path/to/autoapp.py
+            FLASK_DEBUG: 1
+
       - save_cache:
           paths:
             - ./venv
@@ -49,7 +54,7 @@ jobs:
           command: |
             . venv/bin/activate
             flask test
-
-      - store_artifacts:
-          path: test-reports
-          destination: test-reports
+          environment:
+            CONDUIT_SECRET: 'something-really-secret'
+            FLASK_APP: /path/to/autoapp.py
+            FLASK_DEBUG: 1
