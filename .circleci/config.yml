@@ -29,14 +29,14 @@ jobs:
       - run:
           name: install dependencies
           command: |
-            python3 -m venv venv
-            . venv/bin/activate
+#            python -m venv venv
+ #           . venv/bin/activate
             pip install -r requirements/dev.txt --user
 
       - run:
           name: install
           command: |
-           . venv/bin/activate
+#            . venv/bin/activate
             flask db init
             flask db migrate
             flask db upgrade
