@@ -33,11 +33,12 @@ jobs:
             . venv/bin/activate
             pip install --upgrade pip
             pip install -r requirements/dev.txt --user
+            flask db init
 
       - run:
           name: install
           command: |
-            python3 -m venv venv
+           . venv/bin/activate
             flask db init
             flask db migrate
             flask db upgrade
