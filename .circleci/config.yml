@@ -32,15 +32,13 @@ jobs:
           command: |
             python3 -m venv venv
             . venv/bin/activate
-            pip install -r requirements/dev.txt --user
+            pip install -r requirements/dev.txt
             
 
           environment:
             CONDUIT_SECRET: 'something-really-secret'
             FLASK_APP: /home/circleci/repo/autoapp.py
             FLASK_DEBUG: 1
-
-      - run: ls -la && pwd
 
       - save_cache:
           paths:
@@ -100,7 +98,6 @@ jobs:
           name: run tests
           command: |
             . venv/bin/activate
-            pip install pytest
             flask test
           environment:
             CONDUIT_SECRET: 'something-really-secret'
