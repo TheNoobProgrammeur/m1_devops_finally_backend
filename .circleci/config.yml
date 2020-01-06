@@ -13,9 +13,6 @@ jobs:
           POSTGRES_USER: myUsr 
           POSTGRES_PASSOWRD: somePwd 
           POSTGRES_DB: myUsr
-
-    working_directory: ~/repo
-
     steps:
       - checkout
 
@@ -33,7 +30,11 @@ jobs:
             . venv/bin/activate
             pip install --upgrade pip
             pip install -r requirements/dev.txt --user
-            flask db init
+
+          environment:
+            CONDUIT_SECRET: 'something-really-secret'
+            FLASK_APP: /path/to/autoapp.py
+            FLASK_DEBUG: 1
 
       - run:
           name: install
