@@ -88,10 +88,7 @@ jobs:
             FLASK_DEBUG: 1
 
 
-      - save_cache:
-          paths:
-            - venv
-          key: v1-dependencies-{{ checksum "requirements/dev.txt" }}
+      
 
       # run tests!
       # this example uses Django's built-in test-runner
@@ -105,6 +102,11 @@ jobs:
             CONDUIT_SECRET: 'something-really-secret'
             FLASK_APP: /home/circleci/repo/autoapp.py
             FLASK_DEBUG: 1
+
+      - save_cache:
+          paths:
+            - venv
+          key: v1-dependencies-{{ checksum "requirements/dev.txt" }}
 
 workflows:
   version: 2
