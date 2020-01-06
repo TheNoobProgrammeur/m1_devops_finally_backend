@@ -8,8 +8,9 @@ jobs:
     docker:
       # specify the version you desire here
       # use `-browsers` prefix for selenium tests, e.g. `3.6.1-browsers`
-      - image: circleci/python:3.6.1-browsers
+      - image: circleci/python:3.6.2-stretch-browsers
         environment:
+          FLASK_CONFIG: testing
           PIPENV_VENV_IN_PROJECT: true
 
       # Specify service dependencies here if necessary
@@ -21,30 +22,18 @@ jobs:
 
     steps:
       - checkout
-
-      # Download and cache dependencies
       - restore_cache:
-          keys:
-            - v1-dependencies-{{ checksum "requirements/dev.txt" }}
-            # fallback to using the latest cache if no exact match is found
-            - v1-dependencies-
-
+          key: deps1-{{ .Branch }}-{{ checksum "requirements/dev.txt" }}
       - run:
-          name: install dependencies
+          name: Install Python deps in a venv
           command: |
             python3 -m venv venv
             . venv/bin/activate
-            pip install -r requirements/dev.txt --user
-
-          environment:
-            CONDUIT_SECRET: 'something-really-secret'
-            FLASK_APP: /home/circleci/repo/autoapp.py
-            FLASK_DEBUG: 1
-
+            pip install -r requirements/dev.txt
       - save_cache:
+          key: deps1-{{ .Branch }}-{{ checksum "requirements/dev.txt" }}
           paths:
-            - ./venv
-          key: v1-dependencies-{{ checksum "requirements/dev.txt" }}
+            - "venv"
 
 
 
@@ -52,9 +41,11 @@ jobs:
     docker:
       # specify the version you desire here
       # use `-browsers` prefix for selenium tests, e.g. `3.6.1-browsers`
-      - image: circleci/python:3.6.1-browsers
+      - image: circleci/python:3.6.2-stretch-browsers
         environment:
+          FLASK_CONFIG: testing
           PIPENV_VENV_IN_PROJECT: true
+          DATABASE_URL: postgresql://myUsr:somePwd@localhost:5432/myUsr
 
       # Specify service dependencies here if necessary
       # CircleCI maintains a library of pre-built images
@@ -72,10 +63,7 @@ jobs:
 
       # Download and cache dependencies
       - restore_cache:
-          keys:
-            - v1-dependencies-{{ checksum "requirements/dev.txt" }}
-            # fallback to using the latest cache if no exact match is found
-            - v1-dependencies-
+        key: deps1-{{ .Branch }}-{{ checksum "requirements/dev.txt" }}
 
       - run:
           name: bd upgrade 
@@ -86,14 +74,7 @@ jobs:
           environment:
             CONDUIT_SECRET: 'something-really-secret'
             FLASK_APP: /home/circleci/repo/autoapp.py
-            DATABASE_URL: postgresql://myUsr:somePwd@localhost:5432/myUsr
             FLASK_DEBUG: 1
-
-
-      - save_cache:
-          paths:
-            - ./venv
-          key: v1-dependencies-{{ checksum "requirements/dev.txt" }}
 
       # run tests!
       # this example uses Django's built-in test-runner
@@ -102,13 +83,18 @@ jobs:
       # https://nose.readthedocs.io
       - run:
           name: run tests
-          command: |
-            . venv/bin/activate
-            flask test
+          command: flask test
           environment:
             CONDUIT_SECRET: 'something-really-secret'
             FLASK_APP: /home/circleci/repo/autoapp.py
             FLASK_DEBUG: 1
+
+     - save_cache:
+          key: deps1-{{ .Branch }}-{{ checksum "requirements/dev.txt" }}
+          paths:
+            - "venv"
+
+    
 
 workflows:
   version: 2
