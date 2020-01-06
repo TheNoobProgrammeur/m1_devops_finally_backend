@@ -97,7 +97,9 @@ jobs:
       # https://nose.readthedocs.io
       - run:
           name: run tests
-          command: flask test
+          command: |
+            . venv/bin/activate
+            flask test
           environment:
             CONDUIT_SECRET: 'something-really-secret'
             FLASK_APP: /home/circleci/repo/autoapp.py
