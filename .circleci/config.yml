@@ -48,7 +48,7 @@ jobs:
 
 
 
-  initBD:
+  test:
     docker:
       # specify the version you desire here
       # use `-browsers` prefix for selenium tests, e.g. `3.6.1-browsers`
@@ -86,9 +86,6 @@ jobs:
             DATABASE_URL: postgresql://myUsr:somePwd@localhost:5432/myUsr
             FLASK_DEBUG: 1
 
-
-      
-
       # run tests!
       # this example uses Django's built-in test-runner
       # other common Python testing frameworks include pytest and nose
@@ -115,6 +112,6 @@ workflows:
   build-test-and-deploy:
     jobs:
       - build
-      - initBD:
+      - test:
           requires:
             - build
