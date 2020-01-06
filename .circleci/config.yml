@@ -8,11 +8,7 @@ jobs:
     docker:
       # specify the version you desire here
       # use `-browsers` prefix for selenium tests, e.g. `3.6.1-browsers`
-      - image: circleci/python:3.6.1-browsers
-        environment:
-            PIPENV_VENV_IN_PROJECT: true
-            DATABASE_URL: postgresql://myUsr:somePwd@localhost:5432/myUsr
-
+      - image: circleci/python:3.6.1
 
       # Specify service dependencies here if necessary
       # CircleCI maintains a library of pre-built images
@@ -43,6 +39,8 @@ jobs:
             FLASK_APP: /home/circleci/repo/autoapp.py
             FLASK_DEBUG: 1
 
+      - run: ls -la && pwd
+
       - save_cache:
           paths:
             - ./venv
@@ -54,10 +52,7 @@ jobs:
     docker:
       # specify the version you desire here
       # use `-browsers` prefix for selenium tests, e.g. `3.6.1-browsers`
-      - image: circleci/python:3.7.4-browsers
-        environment:
-            PIPENV_VENV_IN_PROJECT: true
-            DATABASE_URL: postgresql://myUsr:somePwd@localhost:5432/myUsr
+      - image: circleci/python:3.6.1
 
       # Specify service dependencies here if necessary
       # CircleCI maintains a library of pre-built images
@@ -89,6 +84,7 @@ jobs:
           environment:
             CONDUIT_SECRET: 'something-really-secret'
             FLASK_APP: /home/circleci/repo/autoapp.py
+            DATABASE_URL: postgresql://myUsr:somePwd@localhost:5432/myUsr
             FLASK_DEBUG: 1
 
 
@@ -102,17 +98,15 @@ jobs:
       # other common Python testing frameworks include pytest and nose
       # https://pytest.org
       # https://nose.readthedocs.io
-
       - run:
           name: run tests
-          command: flask test
+          command: |
+            . venv/bin/activate
+            flask test
           environment:
             CONDUIT_SECRET: 'something-really-secret'
             FLASK_APP: /home/circleci/repo/autoapp.py
-            DATABASE_URL: postgresql://myUsr:somePwd@localhost:5432/myUsr
             FLASK_DEBUG: 1
-
-      
 
 workflows:
   version: 2
