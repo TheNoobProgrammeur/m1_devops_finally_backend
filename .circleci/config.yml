@@ -23,8 +23,8 @@ jobs:
       # Download and cache dependencies
       - restore_cache:
           keys:
-            - v4-dependencies-{{ checksum "requirements/dev.txt" }}
-            - v4-dependencies-
+            - v5-dependencies-{{ checksum "requirements/dev.txt" }}
+            - v5-dependencies-
             # fallback to using the latest cache if no exact match is found
 
       - run:
@@ -41,8 +41,8 @@ jobs:
 
       - save_cache:
           paths:
-            - cache
-          key: v4-dependencies-{{ checksum "requirements/dev.txt" }}
+            - venv
+          key: v5-dependencies-{{ checksum "requirements/dev.txt" }}
 
 
 
@@ -68,8 +68,8 @@ jobs:
       # Download and cache dependencies
       - restore_cache:
           keys:
-            - v4-dependencies-{{ checksum "requirements/dev.txt" }}
-            - v4-dependencies-
+            - v5-dependencies-{{ checksum "requirements/dev.txt" }}
+            - v5-dependencies-
             # fallback to using the latest cache if no exact match is found
     
       - run:
@@ -103,8 +103,8 @@ jobs:
 
       - save_cache:
           paths:
-            - cache
-          key: v4-dependencies-{{ checksum "requirements/dev.txt" }}
+            - venv
+          key: v5-dependencies-{{ checksum "requirements/dev.txt" }}
 
 workflows:
   version: 2
