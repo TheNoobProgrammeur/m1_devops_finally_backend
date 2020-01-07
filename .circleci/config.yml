@@ -20,13 +20,6 @@ jobs:
     steps:
       - checkout
 
-      # Download and cache dependencies
-      - restore_cache:
-          keys:
-            - v2-dependencies-{{ checksum "requirements/dev.txt" }}
-            - v2-dependencies-
-            # fallback to using the latest cache if no exact match is found
-
       - run:
           name: install dependencies
           command: |
