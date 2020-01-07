@@ -2,8 +2,8 @@
 -r prod.txt
 
 # Testing
-# pytest
-# WebTest
+pytest
+WebTest
 factory-boy
 # For python 3
 Faker

@@ -8,7 +8,7 @@ jobs:
     docker:
       # specify the version you desire here
       # use `-browsers` prefix for selenium tests, e.g. `3.6.1-browsers`
-      - image: circleci/python:3.6.2-stretch-browsers
+      - image: circleci/python:3.6.4
 
       # Specify service dependencies here if necessary
       # CircleCI maintains a library of pre-built images
@@ -23,8 +23,8 @@ jobs:
       # Download and cache dependencies
       - restore_cache:
           keys:
-            - v5-dependencies-{{ checksum "requirements/dev.txt" }}
-            - v5-dependencies-
+            - v6-dependencies-{{ checksum "requirements/dev.txt" }}
+            - v6-dependencies-
             # fallback to using the latest cache if no exact match is found
 
       - run:
@@ -42,7 +42,7 @@ jobs:
       - save_cache:
           paths:
             - venv
-          key: v5-dependencies-{{ checksum "requirements/dev.txt" }}
+          key: v6-dependencies-{{ checksum "requirements/dev.txt" }}
 
 
 
@@ -50,7 +50,7 @@ jobs:
     docker:
       # specify the version you desire here
       # use `-browsers` prefix for selenium tests, e.g. `3.6.1-browsers`
-      - image: circleci/python:3.6.2-stretch-browsers
+      - image: circleci/python:3.6.4
       # Specify service dependencies here if necessary
       # CircleCI maintains a library of pre-built images
       # documented at https://circleci.com/docs/2.0/circleci-images/
@@ -68,8 +68,8 @@ jobs:
       # Download and cache dependencies
       - restore_cache:
           keys:
-            - v5-dependencies-{{ checksum "requirements/dev.txt" }}
-            - v5-dependencies-
+            - v6-dependencies-{{ checksum "requirements/dev.txt" }}
+            - v6-dependencies-
             # fallback to using the latest cache if no exact match is found
     
       - run:
@@ -104,7 +104,7 @@ jobs:
       - save_cache:
           paths:
             - venv
-          key: v5-dependencies-{{ checksum "requirements/dev.txt" }}
+          key: v6-dependencies-{{ checksum "requirements/dev.txt" }}
 
 workflows:
   version: 2
