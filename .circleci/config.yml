@@ -143,10 +143,10 @@ jobs:
           name: Publish application to docker hub
           command: |
             docker login -u $DOCKER_USER_NAME -p $DOCKER_PSWD
-            docker tag app $DOCKER_USER_NAME/my-awesome-ci-expr:$CIRCLE_BUILD_NUM
-            docker tag app $DOCKER_USER_NAME/my-awesome-ci-expr:latest
-            docker push $DOCKER_USER_NAME/my-awesome-ci-expr:$CIRCLE_BUILD_NUM
-            docker push $DOCKER_USER_NAME/my-awesome-ci-expr:latest
+            docker tag app $DOCKER_USER_NAME/m1_devops_finally_backend:$CIRCLE_BUILD_NUM
+            docker tag app $DOCKER_USER_NAME/m1_devops_finally_backend:latest
+            docker push $DOCKER_USER_NAME/m1_devops_finally_backend:$CIRCLE_BUILD_NUM
+            docker push $DOCKER_USER_NAME/m1_devops_finally_backend:latest
 
 workflows:
   version: 2
