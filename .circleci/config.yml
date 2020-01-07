@@ -9,8 +9,6 @@ jobs:
       # specify the version you desire here
       # use `-browsers` prefix for selenium tests, e.g. `3.6.1-browsers`
       - image: circleci/python:3.6.2-stretch-browsers
-        environment:
-          PIPENV_VENV_IN_PROJECT: true
 
       # Specify service dependencies here if necessary
       # CircleCI maintains a library of pre-built images
@@ -26,6 +24,7 @@ jobs:
       - restore_cache:
           keys:
             - v2-dependencies-{{ checksum "requirements/dev.txt" }}
+            - v2-dependencies-
             # fallback to using the latest cache if no exact match is found
 
       - run:
@@ -52,9 +51,6 @@ jobs:
       # specify the version you desire here
       # use `-browsers` prefix for selenium tests, e.g. `3.6.1-browsers`
       - image: circleci/python:3.6.2-stretch-browsers
-        environment:
-          PIPENV_VENV_IN_PROJECT: true
-
       # Specify service dependencies here if necessary
       # CircleCI maintains a library of pre-built images
       # documented at https://circleci.com/docs/2.0/circleci-images/
@@ -73,6 +69,7 @@ jobs:
       - restore_cache:
           keys:
             - v2-dependencies-{{ checksum "requirements/dev.txt" }}
+            - v2-dependencies-
             # fallback to using the latest cache if no exact match is found
     
       - run:
@@ -107,7 +104,9 @@ jobs:
       - save_cache:
           paths:
             - venv
-          key: v2-dependencies-{{ checksum "requirements/dev.txt" }}
+          key:
+            - v2-dependencies-{{ checksum "requirements/dev.txt" }}
+           
 
 workflows:
   version: 2
