@@ -101,6 +101,7 @@ jobs:
             CONDUIT_SECRET: 'something-really-secret'
             FLASK_APP: /home/circleci/repo/autoapp.py
             FLASK_DEBUG: 1
+            DATABASE_URL: postgresql://myUsr:somePwd@localhost:5432/myUsr
 
       - save_cache:
           paths:
