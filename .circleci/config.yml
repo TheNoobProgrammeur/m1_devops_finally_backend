@@ -55,10 +55,10 @@ jobs:
       # CircleCI maintains a library of pre-built images
       # documented at https://circleci.com/docs/2.0/circleci-images/
       - image: postgres:9.6.2-alpine
-          environment:
-            POSTGRES_USER: myUsr  
-            POSTGRES_PASSOWRD: somePwd 
-            POSTGRES_DB: myUsr
+        environment:
+          POSTGRES_USER: myUsr  
+          POSTGRES_PASSOWRD: somePwd 
+          POSTGRES_DB: myUsr
 
     working_directory: ~/repo
 
