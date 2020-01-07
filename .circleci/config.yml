@@ -23,8 +23,8 @@ jobs:
       # Download and cache dependencies
       - restore_cache:
           keys:
-            - v6-dependencies-{{ checksum "requirements/dev.txt" }}
-            - v6-dependencies-
+            - v7-dependencies-{{ checksum "requirements/dev.txt" }}
+            - v7-dependencies-
             # fallback to using the latest cache if no exact match is found
 
       - run:
@@ -32,7 +32,7 @@ jobs:
           command: |
             python3 -m venv venv
             . venv/bin/activate
-            pip install -r requirements/dev.txt --user
+            pip install -r requirements/dev.txt
 
           environment:
             CONDUIT_SECRET: 'something-really-secret'
@@ -42,7 +42,7 @@ jobs:
       - save_cache:
           paths:
             - venv
-          key: v6-dependencies-{{ checksum "requirements/dev.txt" }}
+          key: v7-dependencies-{{ checksum "requirements/dev.txt" }}
 
 
 
@@ -68,8 +68,8 @@ jobs:
       # Download and cache dependencies
       - restore_cache:
           keys:
-            - v6-dependencies-{{ checksum "requirements/dev.txt" }}
-            - v6-dependencies-
+            - v7-dependencies-{{ checksum "requirements/dev.txt" }}
+            - v7-dependencies-
             # fallback to using the latest cache if no exact match is found
     
       - run:
@@ -104,7 +104,7 @@ jobs:
       - save_cache:
           paths:
             - venv
-          key: v6-dependencies-{{ checksum "requirements/dev.txt" }}
+          key: v7-dependencies-{{ checksum "requirements/dev.txt" }}
 
 workflows:
   version: 2
