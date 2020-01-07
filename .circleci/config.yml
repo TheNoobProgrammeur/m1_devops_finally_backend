@@ -41,7 +41,7 @@ jobs:
 
       - save_cache:
           paths:
-            - venv
+            - cache
           key: v3-dependencies-{{ checksum "requirements/dev.txt" }}
 
 
@@ -103,7 +103,7 @@ jobs:
 
       - save_cache:
           paths:
-            - venv
+            - cache
           key: v3-dependencies-{{ checksum "requirements/dev.txt" }}
 
 workflows:
