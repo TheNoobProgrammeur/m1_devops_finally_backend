@@ -1,58 +1,119 @@
+# Python CircleCI 2.0 configuration file
+#
+# Check https://circleci.com/docs/2.0/language-python/ for more details
+#
 version: 2
 jobs:
   build:
     docker:
+      # specify the version you desire here
+      # use `-browsers` prefix for selenium tests, e.g. `3.6.1-browsers`
       - image: circleci/python:3.6.2-stretch-browsers
         environment:
-          DATABASE_URL: postgresql://myUsr:somePwd@localhost:5432/myUsr
-      - image: circleci/postgres:9.6.5-alpine-ram
+          PIPENV_VENV_IN_PROJECT: true
+
+      # Specify service dependencies here if necessary
+      # CircleCI maintains a library of pre-built images
+      # documented at https://circleci.com/docs/2.0/circleci-images/
+      # - image: circleci/postgres:9.4
+
     working_directory: ~/repo
+
     steps:
       - checkout
+
+      # Download and cache dependencies
       - restore_cache:
-          key: deps1-{{ .Branch }}-{{ checksum "requirements/dev.txt" }}
+          keys:
+            - v2-dependencies-{{ checksum "requirements/dev.txt" }}
+            # fallback to using the latest cache if no exact match is found
+
       - run:
-          name: Install Python deps in a venv
+          name: install dependencies
           command: |
             python3 -m venv venv
             . venv/bin/activate
-            pip install -r requirements/dev.txt
+            pip install -r requirements/dev.txt --user
 
           environment:
-            CONDUIT_SECRET: something-really-secret
+            CONDUIT_SECRET: 'something-really-secret'
             FLASK_APP: /home/circleci/repo/autoapp.py
             FLASK_DEBUG: 1
-      - save_cache:
-          key: deps1-{{ .Branch }}-{{ checksum "requirements/dev.txt" }}
-          paths:
-            - "venv"
 
+      - save_cache:
+          paths:
+            - venv
+          key: v2-dependencies-{{ checksum "requirements/dev.txt" }}
+
+
+
+  test:
+    docker:
+      # specify the version you desire here
+      # use `-browsers` prefix for selenium tests, e.g. `3.6.1-browsers`
+      - image: circleci/python:3.6.2-stretch-browsers
+        environment:
+          PIPENV_VENV_IN_PROJECT: true
+
+      # Specify service dependencies here if necessary
+      # CircleCI maintains a library of pre-built images
+      # documented at https://circleci.com/docs/2.0/circleci-images/
+      - image: postgres:9.6.2-alpine
+        environment:
+          POSTGRES_USER: myUsr  
+          POSTGRES_PASSOWRD: somePwd 
+          POSTGRES_DB: myUsr
+
+    working_directory: ~/repo
+
+    steps:
+      - checkout
+
+      # Download and cache dependencies
+      - restore_cache:
+          keys:
+            - v2-dependencies-{{ checksum "requirements/dev.txt" }}
+            # fallback to using the latest cache if no exact match is found
+    
       - run:
+          name: bd upgrade 
           command: |
             . venv/bin/activate
             flask db upgrade
           environment:
-            CONDUIT_SECRET: something-really-secret
+            CONDUIT_SECRET: 'something-really-secret'
             FLASK_APP: /home/circleci/repo/autoapp.py
+            DATABASE_URL: postgresql://myUsr:somePwd@localhost:5432/myUsr
             FLASK_DEBUG: 1
+
+
+      
+
+      # run tests!
+      # this example uses Django's built-in test-runner
+      # other common Python testing frameworks include pytest and nose
+      # https://pytest.org
+      # https://nose.readthedocs.io
       - run:
+          name: run tests
           command: |
             . venv/bin/activate
             flask test
-
           environment:
-            CONDUIT_SECRET: something-really-secret
+            CONDUIT_SECRET: 'something-really-secret'
             FLASK_APP: /home/circleci/repo/autoapp.py
-            FLASK_DEBUG: 1  
-      - store_artifacts:
-          path: test-reports/
-          destination: tr1
-      - store_test_results:
-          path: test-reports/
+            FLASK_DEBUG: 1
 
+      - save_cache:
+          paths:
+            - venv
+          key: v2-dependencies-{{ checksum "requirements/dev.txt" }}
 
 workflows:
   version: 2
-  build-deploy:
+  build-test-and-deploy:
     jobs:
       - build
+      - test:
+          requires:
+            - build
